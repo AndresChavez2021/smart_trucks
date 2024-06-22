@@ -13,8 +13,14 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreEquipoRecorridoRequest;
 use App\Models\Barrio;
+use App\Models\Categorias_reciclable;
+use App\Models\Reclamo;
+use App\Models\Recoleccion;
 use App\Models\Recorrido;
+use Carbon\Carbon;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ChoferController extends Controller
 {
@@ -208,16 +214,16 @@ class ChoferController extends Controller
             $clientes = User::select(["users.name","token_push_notifications.expo_token","barrios.nombre"])
             ->join("token_push_notifications","token_push_notifications.user_id","=","users.id")
             ->join("barrios","barrios.id","=","users.id_barrio")
-            ->where("users.id_barrio", $request->id_barrio)
+            // ->where("users.id",Auth::user()->id)
             ->get();
-
+            // dd($clientes);
                          foreach ($clientes as $cliente) {
-                            $message = "Hey! " . $cliente->name . " hay un camion cerca tu barrio ".$cliente->nombre;
+                            $message = "Hey! " . $cliente->name . " hay un camion cerca tu barrio ";
                             $data = [
                                 'title' => 'Smart Trucks',
                                 'body' => $message,
                                 'send' => [
-                                    'barrio' => $cliente->nombre,
+                                    'barrio' => "",
                                     'cliente' => $cliente->name,
                                 ]
                             ];
@@ -249,5 +255,85 @@ class ChoferController extends Controller
 
         return $response->getBody();
     }
+
+
+    public function calculoReciclaje(Request $request){
+
+        $reciclaje=new Recoleccion();
+        $reciclaje->fechaHora=Carbon::now()->format('Y-m-d H:i:s');
+        $reciclaje->peso=$request->peso;
+        $reciclaje->id_categoria=$request->id_categoria;
+        $reciclaje->id_usuario=$request->id_usuario;
+        $reciclaje->save();
+
+        return $this->success(
+            "Calculo registrado ");
+
+    }
+
+
+
+    public function recoleccionesPorCategoria(Request $request)
+    {
+        // Obtener las recolecciones agrupadas por categoría para un usuario específico
+        $recolecciones = Recoleccion::select('id_categoria', DB::raw('count(*) as total'))
+            ->where('id_usuario', $request->id_usuario)
+            ->groupBy('id_categoria')
+            ->get();
+
+        // Mapear las recolecciones para incluir el nombre de la categoría
+        $result = $recolecciones->map(function ($item) {
+            $categoria = Categorias_reciclable::find($item->id_categoria);
+            return [
+                'nombre' => $categoria->nombre,
+                'total' => $item->total
+            ];
+        });
+
+        return response()->json($result);
+    }
+
+public function categoriasConUsuariosMasUsados()
+{
+    $categoriasConUsuarios = Recoleccion::select('id_categoria', DB::raw('count(id_usuario) as total'))
+        ->groupBy('id_categoria')
+        ->orderBy('total', 'desc')
+        ->get();
+
+    $result = $categoriasConUsuarios->map(function ($item) {
+        $categoria = Categorias_reciclable::find($item->id_categoria);
+        return [
+            'nombre' => $categoria->nombre,
+            'total' => $item->total
+        ];
+    });
+
+    return response()->json($result);
+}
+
+public function guardarReclamo(Request $request)
+{
+
+
+    // Guardar la imagen
+    if ($request->hasFile('foto')) {
+        $imagen = $request->file('foto');
+        $rutaImagen = $imagen->store('reclamos', 'public'); // Almacena la imagen en storage/app/public/reclamos
+        $fotoUrl = Storage::url($rutaImagen);
+    } else {
+        $fotoUrl = null;
+    }
+
+    // Guardar en la base de datos
+    $reclamo = new Reclamo();
+    $reclamo->descripcion = $request->descripcion;
+    $reclamo->fechaHora = Carbon::now()->format('Y-m-d H:i:s');
+    $reclamo->foto = $fotoUrl;
+    $reclamo->coordenada = $request->coordenada;
+    $reclamo->id_cliente = $request->id_cliente;
+    $reclamo->save();
+
+    return response()->json(['message' => 'Reclamo guardado correctamente'], 201);
+}
 
 }

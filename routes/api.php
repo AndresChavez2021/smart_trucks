@@ -26,10 +26,18 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/obtenerCoordenadaDeLaRuta', [ChoferController::class, 'obtenerCoordenadaDeLaRuta']);
     Route::post('/guardarRecorridoDelChofer', [ChoferController::class, 'guardarRecorridoDelChofer']);
     Route::get('/listaBarrios', [ChoferController::class, 'listaBarrios']);
+
     Route::post('/sendNotifications', [ChoferController::class, 'enviarNotificacionDellegada']);
+
 
     /* CLIENTE  */
 
     Route::post('/cliente/logout', [ClientController::class, 'logout']);
+    Route::post('/cliente/calculoReciclaje', [ChoferController::class, 'calculoReciclaje']);
+    Route::get('/cliente/categorias-usuarios-mas-usados', [ChoferController::class, 'categoriasConUsuariosMasUsados']);
+    Route::get('/cliente/recoleccionesPorCategoria', [ChoferController::class, 'recoleccionesPorCategoria']);
 
 });
+
+Route::post('/cliente/guardar-reclamo', [ChoferController::class, 'guardarReclamo']);
+
