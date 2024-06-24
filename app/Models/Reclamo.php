@@ -14,7 +14,11 @@ class Reclamo extends Model
         'fechaHora',
         'foto',
         'coordenada',
-        'id_cliente',
-        
+        'id_cliente'
     ];
+
+    public function cliente()
+    {
+        return $this->belongsTo(User::class, 'id_cliente');
+    }
 }

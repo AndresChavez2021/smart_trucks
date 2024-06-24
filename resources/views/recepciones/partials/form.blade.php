@@ -38,7 +38,7 @@
             <option value=""> Seleccione Un Tipo de Basura... </option>
             @foreach ($basuras as $basura)
                 <option value="{{ $basura->id }}" @if ((isset($recepcion->id_basura) ? $recepcion->id_basura : old('id_basura')) == $basura->id) selected @endif>
-                    {{ $basura->tipo }}
+                    {{ $basura->nombre }}
                 </option>
             @endforeach
         </select>

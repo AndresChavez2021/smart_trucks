@@ -19,25 +19,13 @@ class ReclamoController extends Controller
      */
     public function index(Request $request)
     {
-        $reclamos = DB::table('reclamos')
-            ->join('users', 'reclamos.id_cliente', '=', 'users.id')
-            ->select(
-                'reclamos.id',
-                'reclamos.descripcion',
-                'reclamos.fechaHora',
-                'users.name AS cliente'
-            )
-            ->orderBy('reclamos.id', 'ASC');
-        $limit = (isset($request->limit)) ? $request->limit : 10;
-        if (isset($request->search)) {
-            $reclamos = $reclamos->where('reclamos.id', 'like', '%' . $request->search . '%')
-                ->orWhere('reclamos.descripcion', 'like', '%' . $request->search . '%')
-                ->orWhere('reclamos.fechaHora', 'like', '%' . $request->search . '%')
-                ->orWhere('users.name', 'like', '%' . $request->search . '%');
-        }
-        $reclamos = $reclamos->paginate($limit)->appends($request->all());
+        $reclamos = Reclamo::with('cliente')->paginate(10); // Incluir la relación cliente y paginar resultados
         return view('reclamos.index', compact('reclamos'));
     }
+    
+    
+    
+
 
     /**
      * Show the form for creating a new resource.
@@ -46,8 +34,7 @@ class ReclamoController extends Controller
      */
     public function create()
     {
-        $clientes = User::where('tipoc', 1)->get();
-        return view('reclamos.create', compact('clientes'));
+       
     }
 
     /**
@@ -58,8 +45,7 @@ class ReclamoController extends Controller
      */
     public function store(StoreReclamoRequest $request)
     {
-        reclamo::create($request->validated());
-        return redirect()->route('reclamos.index')->with('mensaje', 'reclamo Agregado Con Éxito');
+       
     }
 
     /**
@@ -70,9 +56,7 @@ class ReclamoController extends Controller
      */
     public function show($id)
     {
-        $reclamo = reclamo::where('id', '=', $id)->firstOrFail();
-        $clientes = User::where('tipoc', 1)->get();
-        return view('reclamos.show', compact('reclamo', 'clientes'));
+      
     }
 
     /**
@@ -83,9 +67,7 @@ class ReclamoController extends Controller
      */
     public function edit($id)
     {
-        $reclamo = reclamo::where('id', '=', $id)->firstOrFail();
-        $clientes = User::where('tipoc', 1)->get();
-        return view('reclamos.edit', compact('reclamo', 'clientes'));
+       
     }
 
     /**
@@ -97,9 +79,7 @@ class ReclamoController extends Controller
      */
     public function update(UpdateReclamoRequest $request, $id)
     {
-        $reclamo = reclamo::find($id);
-        $reclamo->update($request->validated());
-        return redirect()->route('reclamos.index')->with('message', 'Se ha actualizado los datos correctamente.');
+       
     }
 
     /**
@@ -110,12 +90,6 @@ class ReclamoController extends Controller
      */
     public function destroy($id)
     {
-        $reclamo = reclamo::findOrFail($id);
-        try {
-            $reclamo->delete();
-            return redirect()->route('reclamos.index')->with('message', 'Se han borrado los datos correctamente.');
-        } catch (QueryException $e) {
-            return redirect()->route('reclamos.index')->with('danger', 'Datos relacionados, imposible borrar dato.');
-        }
+       
     }
 }

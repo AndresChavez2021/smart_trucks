@@ -63,7 +63,9 @@
   --bs-body-color: #212529;
   --bs-body-bg: #fff;
 }
-
+#mapa-container, #lista-container {
+  display: none;
+}
 #headerSidebar{
   background: rgb(0, 150, 136);
   color: rgba(255, 255, 255, alpha);

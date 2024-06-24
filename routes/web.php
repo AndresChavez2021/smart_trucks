@@ -73,7 +73,7 @@ Route::group(['middleware' => ['auth']], function () {
     route::resource('/redes', RedController::class);
     route::resource('/establecimientos', EstablecimientoController::class);
     route::resource('/recepciones', RecepcionController::class);
-    route::resource('/barrios', BarrioController::Class);
+    route::resource('/barrios', BarrioController::class);
     route::resource('/datasets', DatasetController::class);
     Route::get('/datasets/query/{id}', [DatasetController::class, 'query'])->name('datasets.query');
     Route::post('/datasets/query', [DatasetController::class, 'queryStore'])->name('datasets.queryStore');

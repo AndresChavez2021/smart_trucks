@@ -162,13 +162,14 @@
                         <b> Alarmas</b>
                     </a>
                 </li>
+            -->
                 <li class="{{ 'reclamos' == Request::is('reclamos*') ? 'active' : '' }}">
                     <a href="{{ url('/reclamos') }}">
                         <i class="fas fa-exclamation"></i>
                         <b> Reclamos</b>
                     </a>
                 </li>
-            -->
+        
             </ul>
         </nav>
     </div>
