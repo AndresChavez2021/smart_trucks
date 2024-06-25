@@ -74,8 +74,8 @@
 
             reclamos.forEach(reclamo => {
                 // Extrae las coordenadas de los objetos JSON
-                let lat = parseFloat(reclamo.coordenada.latitude);
-                let lng = parseFloat(reclamo.coordenada.longitude);
+                let lat = parseFloat(reclamo.coordenada[0]);
+                let lng = parseFloat(reclamo.coordenada[1]);
 
                 // Añade el marcador al mapa
                 L.marker([lat, lng], { icon: customIcon }).addTo(map)
