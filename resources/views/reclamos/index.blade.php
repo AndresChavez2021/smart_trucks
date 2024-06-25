@@ -41,7 +41,7 @@
                             <td>{{ $reclamo->id }}</td>
                             <td>{{ $reclamo->descripcion }}</td>
                             <td>{{ $reclamo->fechaHora }}</td>
-                            <td>{{ $reclamo->coordenada['latitude'] }}, {{ $reclamo->coordenada['longitude'] }}</td>
+                            <td>{{ $reclamo->coordenada }}</td>
                             <td>{{ $reclamo->cliente->name }}</td>
                         </tr>
                     @endforeach
