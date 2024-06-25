@@ -51,25 +51,38 @@
         </div>
     </div>
 
+    <!-- Transfiere los datos de PHP a JavaScript -->
     <script>
-        // Define un icono personalizado usando la ruta relativa desde public
-        let customIcon = L.icon({
-            iconUrl: '{{ asset("img/map.png") }}',
-            iconSize: [40, 41],
-            iconAnchor: [40, 41],
-            popupAnchor: [12, 34]
+        const reclamos = @json($reclamos->items());
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Define un icono personalizado usando la ruta relativa desde public
+            let customIcon = L.icon({
+                iconUrl: '{{ asset("img/map.png") }}',
+                iconSize: [40, 41],
+                iconAnchor: [40, 41],
+                popupAnchor: [12, 34]
+            });
+
+            let map = L.map('mi_mapa').setView([-17.78327916790587, -63.182134246564736], 13);
+
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            reclamos.forEach(reclamo => {
+                // Divide las coordenadas en latitud y longitud
+                let coords = reclamo.coordenada.split(',');
+                let lat = parseFloat(coords[0]);
+                let lng = parseFloat(coords[1]);
+
+                // Añade el marcador al mapa
+                L.marker([lat, lng], { icon: customIcon }).addTo(map)
+                    .bindPopup(`<strong>Cliente:</strong> ${reclamo.cliente.name}<br><strong>Descripción:</strong> ${reclamo.descripcion}`);
+            });
         });
-
-        let map = L.map('mi_mapa').setView([-17.78327916790587, -63.182134246564736], 13);
-
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-
-        /*@foreach($reclamos as $reclamo)
-            L.marker([{{ $reclamo->coordenada }}], { icon: customIcon }).addTo(map)
-                .bindPopup("<strong>Cliente:</strong> {{ $reclamo->cliente->name }}<br><strong>Descripción:</strong> {{ $reclamo->descripcion }}");
-        @endforeach*/
     </script>
 </body>
 @endsection
