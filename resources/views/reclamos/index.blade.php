@@ -66,10 +66,10 @@
             attribution: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        @foreach($reclamos as $reclamo)
+        /*@foreach($reclamos as $reclamo)
             L.marker([{{ $reclamo->coordenada }}], { icon: customIcon }).addTo(map)
                 .bindPopup("<strong>Cliente:</strong> {{ $reclamo->cliente->name }}<br><strong>Descripción:</strong> {{ $reclamo->descripcion }}");
-        @endforeach
+        @endforeach*/
     </script>
 </body>
 @endsection
