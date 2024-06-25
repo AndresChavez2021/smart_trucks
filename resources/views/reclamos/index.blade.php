@@ -52,11 +52,11 @@
     </div>
 
     <!-- Transfiere los datos de PHP a JavaScript -->
-    <script>
-        const reclamos = @json($reclamos->items());
-    </script>
+    
 
-    <script>
+       <script>
+
+        const reclamos = @json($reclamos->items());
         document.addEventListener('DOMContentLoaded', function() {
             // Define un icono personalizado usando la ruta relativa desde public
             let customIcon = L.icon({
@@ -74,8 +74,9 @@
 
             reclamos.forEach(reclamo => {
                 // Extrae las coordenadas de los objetos JSON
-                let lat = parseFloat(reclamo.coordenada[0]);
-                let lng = parseFloat(reclamo.coordenada[1]);
+                let coordenadas = JSON.parse(reclamo.coordenada);
+                let lat = parseFloat(coordenadas.latitude);
+                let lng = parseFloat(coordenadas.longitude);
 
                 // Añade el marcador al mapa
                 L.marker([lat, lng], { icon: customIcon }).addTo(map)
