@@ -41,7 +41,7 @@
                             <td>{{ $reclamo->id }}</td>
                             <td>{{ $reclamo->descripcion }}</td>
                             <td>{{ $reclamo->fechaHora }}</td>
-                            <td>{{ $reclamo->coordenada }}</td>
+                            <td>{{ $reclamo->coordenada['latitude'] }}, {{ $reclamo->coordenada['longitude'] }}</td>
                             <td>{{ $reclamo->cliente->name }}</td>
                         </tr>
                     @endforeach
@@ -73,10 +73,9 @@
             }).addTo(map);
 
             reclamos.forEach(reclamo => {
-                // Divide las coordenadas en latitud y longitud
-                let coords = reclamo.coordenada.split(',');
-                let lat = parseFloat(coords[0]);
-                let lng = parseFloat(coords[1]);
+                // Extrae las coordenadas de los objetos JSON
+                let lat = parseFloat(reclamo.coordenada.latitude);
+                let lng = parseFloat(reclamo.coordenada.longitude);
 
                 // Añade el marcador al mapa
                 L.marker([lat, lng], { icon: customIcon }).addTo(map)
